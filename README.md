@@ -4,7 +4,6 @@
 
 Imagine you have a network like this:
 
-[image of network topology]
 ![NAT](https://github.com/Skipperro/route53-updater/blob/master/img/NAT.png "NAT architecture")
 
 There are some PCs behind NAT and the router is getting dynamic IP from ISP, so each time you reconnect with the
