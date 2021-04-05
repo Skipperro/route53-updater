@@ -112,3 +112,8 @@ This is still not done, but you could just start
 `route53-updater.exe` to run it manually.
 
 You could also add it to autostart, preferably via Task Scheduler.
+
+### Troubleshooting
+
+If you can't access your PC using defined domain, please check your Router settings. Some of them, like FritzBox have
+IPv6 forwarding disabled by default. You need do activate it in order to have access to your PCs.
