@@ -5,6 +5,7 @@
 Imagine you have a network like this:
 
 [image of network topology]
+![NAT](https://github.com/Skipperro/route53-updater/blob/master/img/NAT.png "NAT architecture")
 
 There are some PCs behind NAT and the router is getting dynamic IP from ISP, so each time you reconnect with the
 Internet, you get new IP address. This is a very common setup in private and residential networks.
@@ -22,7 +23,7 @@ specific PC and keep them updated it your IP changes.
 
 ## How it's working
 
-[image of new topology]
+![Route53](https://github.com/Skipperro/route53-updater/blob/master/img/Route53.png "Route 53 DNS")
 
 While the service is running the DNS record configured in config file is kept up-to-date with **current IPv6 address of
 the PC**, so it's always possible to access the machine by using subdomain like "workstation.mydomain.net"
@@ -53,14 +54,14 @@ You will also need to create a user with programatic access to your AWS via API 
 automatically.
 
 Go to AWS IAM, create new user, give him programatic access and permissions to Route53 service. At the end of this
-process, you will get API Key and Secret. Please save them for later.
+process, you will get API Key and Secret. **Please save them for later**.
 
 ### Configure Route53-Updater
 
 You could build it on your own, but easiest way would be to simply grab latest binaries from here:
 https://github.com/Skipperro/route53-updater/releases
 
-Download the package, extract it and edit **config.json** file.
+Download the package, extract it and edit `config.json` file.
 
 This is how it should look like by default:
 
@@ -108,7 +109,7 @@ And that's it. Your DNS will be kept up-to-date!
 
 ### Install and run (Windows)
 
-This is still not completly done, but you could just start
+This is still not done, but you could just start
 `route53-updater.exe` to run it manually.
 
 You could also add it to autostart, preferably via Task Scheduler.
