@@ -1,0 +1,14 @@
+[Unit]
+Description=Route 53 Updater service
+After=network.target sshd.service
+StartLimitIntervalSec=10
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=root
+ExecStart=/usr/share/route53-updater/route53-updater
+
+[Install]
+WantedBy=multi-user.target
