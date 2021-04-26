@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,9 +15,9 @@ namespace route53_updater
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private int _interval = 60000;
         private string _lastIpv4 = "";
         private string _lastIpv6 = "";
-        private int _interval = 60000;
 
         public Worker(ILogger<Worker> logger)
         {
@@ -49,8 +48,7 @@ namespace route53_updater
             {
                 var settings = Settings.Load();
                 _interval = settings.RefreshInterval;
-                if (settings.AwsKey.Contains(" ") || settings.AwsSecret.Contains(" ") ||
-                    !settings.HostedZone.Contains(".") || !settings.RecordName.Contains("."))
+                if (settings.AwsKey.Contains(" ") || settings.AwsSecret.Contains(" ") || !settings.HostedZone.Contains(".") || !settings.RecordName.Contains("."))
                 {
                     _logger.LogError($"Config file is invalid. Please edit {Settings.GetConfigFilePath()} file!");
                     return;
@@ -89,33 +87,12 @@ namespace route53_updater
                     var hostedZoneId = hzone.Id;
                     var rtype = RRType.A;
                     if (settings.UseIPv6) rtype = RRType.AAAA;
-                    var recordSet = new ResourceRecordSet()
-                    {
-                        Name = settings.RecordName.ToLower(),
-                        TTL = 60,
-                        Type = rtype,
-                        ResourceRecords = new List<ResourceRecord>
-                        {
-                            new ResourceRecord {Value = ip}
-                        }
-                    };
-                    var change = new Change()
-                    {
-                        ResourceRecordSet = recordSet,
-                        Action = ChangeAction.UPSERT
-                    };
-                    var changeBatch = new ChangeBatch()
-                    {
-                        Changes = new List<Change> {change}
-                    };
-                    var recordsetRequest = new ChangeResourceRecordSetsRequest()
-                    {
-                        HostedZoneId = hostedZoneId,
-                        ChangeBatch = changeBatch
-                    };
+                    var recordSet = new ResourceRecordSet {Name = settings.RecordName.ToLower(), TTL = 10000, Type = rtype, ResourceRecords = new List<ResourceRecord> {new() {Value = ip}}};
+                    var change = new Change {ResourceRecordSet = recordSet, Action = ChangeAction.UPSERT};
+                    var changeBatch = new ChangeBatch {Changes = new List<Change> {change}};
+                    var recordsetRequest = new ChangeResourceRecordSetsRequest {HostedZoneId = hostedZoneId, ChangeBatch = changeBatch};
                     var recordsetResponse = client.ChangeResourceRecordSetsAsync(recordsetRequest).Result;
-                    _logger.LogInformation(
-                        $"Updated AWS Route 53 record of [{settings.RecordName.ToLower()}] to [{ip}]");
+                    _logger.LogInformation($"Updated AWS Route 53 record of [{settings.RecordName.ToLower()}] to [{ip}]");
                 }
             }
             catch (Exception e)
